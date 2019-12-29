@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>你画我猜</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: url(img/hbslsd.jpg);
+				background-size: 100% 100%;
+			}
+			#app{
+				width: 600px;
+				height: 400px;
+				background: rgba(255,255,255,0.6);
+				position: absolute;
+				left: 50%;
+				margin-left: -300px;
+				top: 50%;
+				margin-top: -200px;
+				border-radius: 20px;
+			}
+			#time{
+				display: inline-block;
+				width: 300px;
+				height: 400px;
+				color: red;
+				font-size: 100px;
+				text-align: center;
+				line-height: 400px;
+			}
+			#box_right{
+				width: 299px;
+				height: 400px;
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				border-left:1px solid gainsboro;
+			}
+			#num{
+				position: absolute;
+				top: 5px;
+				left: 10px;
+				font-size: 14px;
+			}
+			#a{
+				position: absolute;
+				top: 5px;
+				left: 125px;
+				font-size: 14px;
+				color: green;
+			}
+			#score{
+				position: absolute;
+				top: 5px;
+				right: 10px;
+				font-size: 14px;
+			}
+			#title{
+				display: inline-block;
+				width: 100%;
+				height: 30px;
+				background: orange;
+				color: white;
+				text-align: center;
+				line-height: 30px;
+				font-size: 20px;
+				position: absolute;
+				top: 50px;
+			}
+			#info{
+				display: inline-block;
+				width: 100%;
+				height: 30px;
+				text-align: center;
+				line-height: 30px;
+				font-size: 18px;
+				position: absolute;
+				top: 50%;
+				margin-top: -15px;
+			}
+			#start_btn{
+				display: inline-block;
+				width: 200px;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				background: orange;
+				color: white;
+				border-radius: 10px;
+				position: absolute;
+				bottom: 20px;
+				left: 50%;
+				margin-left: -100px;
+			}
+			#box_yesorno{
+				width: 200px;
+				height: 40px;
+				border-radius: 10px;
+				position: absolute;
+				bottom: 20px;
+				left: 50%;
+				margin-left: -100px;
+				display: none;
+			}
+			#btn_yes{
+				display: inline-block;
+				width: 34px;
+				height: 34px;
+				border-radius: 50%;
+				background: green;
+				color: white;
+				text-align: center;
+				line-height: 34px;
+				position: absolute;
+				left: 20px;
+				top: 3px;
+			}
+			#btn_no{
+				display: inline-block;
+				width: 34px;
+				height: 34px;
+				border-radius: 50%;
+				background: red;
+				color: white;
+				text-align: center;
+				line-height: 34px;
+				position: absolute;
+				right: 20px;
+				top: 3px;
+			}
+		</style>
+		<script src="js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var num = 1;
+				var s = 0;
+				var info = "你准备好了吗?";
+				var time = 180;
+				var texts = ["怦然心动","蔡徐坤","肖战","李现",
+        		"天王盖地虎","凤姐","犀利哥","鬼哭狼嚎","闭月羞花","花枝招展",
+				"为所欲为","花魁","小肚鸡肠","指鹿为马","杨帆起航","怦然心动","匍匐前进",
+				"老司机","一瘸一拐","阿里巴巴","锋芒毕露","土豆","蜡烛","奔跑吧兄弟",
+				"闻鸡起舞","豌豆","快人快语","狼吞虎咽","阴盛阳衰","枸杞","布达拉宫","双眼皮",
+				"心有灵犀一点通","悬崖勒马","周润发","补考","宁夏","蓝天白云","沉鱼落雁","袜子",
+				"泡面","狡兔三窟","小家碧玉","痛哭流涕","哭笑不得","背水一战"];
+				var timer = null;
+				function nextText(){
+					var i = Math.floor(Math.random()*texts.length);
+					var str = texts[i];
+					$("#info").text(str);
+				}
+				function resetText(){
+					num = 1;
+					s = 0;
+					info = "你准备好了吗?";
+					time = 180;
+					
+					$("#num").text("第1题");
+					$("#score").text("得分:0");
+					$("#info").text(info);
+					$("#time").text(time);
+				}
+				
+				getScores();
+				$("#start_btn").click(function(){
+					$("#start_btn").css("display","none");
+					$("#box_yesorno").css("display","block");
+					nextText();
+					timer = setInterval(function(){
+						time--;
+						$("#time").text(time+"");
+						if(time == 0){
+							console.log("time:"+time);
+							/*
+							 * 游戏结束
+							 */
+							//清理定时器
+							clearInterval(timer);
+							//显示得分
+							alert("你本次得分为:"+s);
+							//获取登录页面上传的用户账户
+							var username = localStorage["un"]
+							//上传数据
+							$.ajax({
+								type:"post",
+								url:"upscore",
+								async:true,
+								data:{
+									user:username,
+									score:s
+								},
+								dataType:"json",
+								success:function(data){
+									console.log("data:"+data)
+									if(data.code == 0){
+										resetText();
+										$("#start_btn").css("display","block");
+										$("#box_yesorno").css("display","none");
+										getScores();
+									}else{
+										alert(data.msg);
+									}
+								},
+								error:function(code,msg){
+									alert("请检查您的网络");
+								}
+							});
+							
+							
+						}
+					},100);
+					
+				});
+				
+				$("#btn_yes").click(function(){
+					num++;
+					s++;
+					$("#num").text("第"+num+"题");
+					$("#score").text("得分:"+s);
+					nextText();
+				});
+				$("#btn_no").click(function(){
+					num++;
+					$("#num").text("第"+num+"题");
+					nextText();
+				});	
+				/**
+				 * 获取榜单
+				 */
+				function getScores(){
+					//清理子元素
+					$("#table").empty();
+					$.ajax({
+						type:"get",
+						url:"getphbservlet",
+						async:true,
+						dataType:"json",
+						success:function(data){
+							if(data.code != 0){
+								alert(data.msg);
+								return;
+							}
+							
+							/*var list = data.obj;
+							for(var i = 0;i<list.length;i++){
+								var d = list[i];
+								var tr = document.createElement("tr");
+								tr.innerHTML = "<td>"+i+"</td><td>"+d.name+"</td><td>"+d.score+"</td>";
+								$("#table").append(tr);
+							}*/
+						},
+						error:function(code,msg){
+							alert("请检查您的网络");
+						}
+					});
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<div id="app">
+			<font id="time">180</font>
+			<div id="box_right">
+				<font id="num">第1题</font>
+				<a href="bandan.html" id="a"> 榜单</a>
+				<font id="score">得分:0</font>
+				<font id="title">你画我猜</font>
+				<font id="info">你准备好了吗?</font>
+				<font id="start_btn">开始游戏</font>
+				<div id="box_yesorno">
+					<font id="btn_yes">√</font>
+					<font id="btn_no">×</font>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

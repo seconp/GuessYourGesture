@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>修改密码</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: url(img/hbslsd.jpg);
+				background-size:100% 100% ;
+			}
+			#app{
+				width: 350px;
+				height: 400px;
+				background: rgba(255,255,255,0.6);
+				border-radius:10px ;
+				position: absolute;
+				left: 50%;
+				margin-left: -175px;
+				top: 50%;
+				margin-top: -200px;
+			}
+			#title{
+				color: orange;
+				margin: 20px;
+			}
+			#line{
+				margin: 10px;
+			}
+			.input{
+				width: 260px;
+				font-size:14px ;
+				margin: 10px;
+				border-radius:10px;
+				padding: 5px;
+			}
+			#box_a{
+				text-align: right;
+				padding-right: 20px;
+			}
+			.a{
+				text-decoration: none;
+				font-size: 14px;
+			}
+			#btn{
+				display: inline-block;
+				background: orange;
+				color: white;
+				width: 200px;
+				height: 30px;
+				line-height: 30px;
+				border-radius: 20px;
+				position: absolute;
+				bottom: 10px;
+				left: 50%;
+				margin-left: -100px;
+			}
+		</style>
+		<script src="js/jquery-2.1.0.js" type="text/javascript" charset="UTF-8">
+		</script>
+		<script >
+			$(document).ready(function()
+			{
+				$("#btn").click(function(){
+				var username=$("#username").val();
+				var oldpassword=$("#oldpassword").val();
+				var newpassword1=$("#newpassword1").val();
+				var newpassword2=$("#newpassword2").val();
+				if(username==null||username=="")
+				{
+					alert("请输入账号");
+					return;
+				}
+				if(oldpassword==null||oldpassword=="")
+				{
+					alert("请输入密码");
+					return;
+				}
+				if(newpassword1==null||newpassword1=="")
+				{
+					alert("新密码不能为空");
+				}
+				if(newpassword1!=newpassword2)
+				{
+					alert("两次密码不一致");
+					return;
+				}
+				
+				$.ajax({
+					type:"post",
+					url:"updatapassword",
+					async:true,
+					data:{
+						user:username,
+						oldpass:oldpassword,
+						newpass:newpassword1,
+						
+					},
+					dataType:"json",
+					success:function(data){
+							if(data.code == 0){
+								//localStorage.un = username;
+								//注册成功
+								window.location.href = "login.html";
+							}else{
+								alert(data.msg);
+							}
+						},
+						error:function(code,msg){
+							alert("请检查您的网络");
+				}
+					})
+				});
+				
+				
+			});
+				
+				
+			
+		</script>		
+		
+	</head>
+	<body>
+		<div id="app" align="center">
+			<h1 id="title">你画我猜:修改密码</h1>
+			<hr id="line" />
+			<input id="username" class="input" type="text" placeholder="请输入账号" /><br />
+			<input id="oldpassword" class="input" type="password" placeholder="请输入原密码" /><br />
+			<input id="newpassword1" class="input" type="password" placeholder="请输入新密码" /><br />
+			<input id="newpassword2" class="input" type="password" placeholder="请确认密码" /><br />
+			<font id="btn">修改密码</font>
+		</div>
+	</body>
+</html>

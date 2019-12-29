@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: url(img/hbslsd.jpg);
+				background-size:100% 100% ;
+			}
+			#app{
+				width: 350px;
+				height: 300px;
+				background: rgba(255,255,255,0.6);
+				border-radius:10px ;
+				position: absolute;
+				left: 50%;
+				margin-left: -175px;
+				top: 50%;
+				margin-top: -150px;
+			}
+			#title{
+				color: orange;
+				margin: 20px;
+			}
+			#line{
+				margin: 10px;
+			}
+			.input{
+				width: 260px;
+				font-size:14px ;
+				margin: 10px;
+				border-radius:10px;
+				padding: 5px;
+			}
+			#box_a{
+				text-align: right;
+				padding-right: 45px;
+			}
+			.a{
+				text-decoration: none;
+				font-size: 14px;
+			}
+			#btn{
+				display: inline-block;
+				background: orange;
+				color: white;
+				width: 200px;
+				height: 30px;
+				line-height: 30px;
+				border-radius: 20px;
+				position: absolute;
+				bottom: 10px;
+				left: 50%;
+				margin-left: -100px;
+			}
+		</style>
+		
+		<script src="js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//当文档加载完成时执行function中的代码
+			$(document).ready(function(){
+				//当id为btn的标签被点击时执行function中的代码
+				$("#btn").click(function(){
+					var username = $("#username").val();
+					var upassword = $("#password").val();
+					if(username == null || username == ""){
+						alert("请输入账号");
+						return;
+					}
+					
+					if(upassword == null || upassword == ""){
+						alert("请输入密码");
+						return;
+					}
+					
+					$.ajax({
+						type:"post",
+						url:"loginservlet",
+						async:true,
+						data:{
+							user:username,
+							pass:upassword
+						},
+						dataType:"json",
+						success:function(data){
+							if(data.code == 0){
+								localStorage.un = username;
+								//登录成功
+								window.location.href = "index.html";
+							}else{
+								alert(data.msg);
+							}
+						},
+						error:function(code,msg){
+							alert("请检查您的网络");
+						}
+					});
+				});
+				
+				
+			});
+		</script>
+	</head>
+	<body>
+		<div id="app" align="center">
+			<h1 id="title">你画我猜:登录</h1>
+			<hr id="line" />
+			<input id="username" class="input" type="text" placeholder="请输入账号" /><br />
+			<input id="password" class="input" type="password" placeholder="请输入密码" /><br />
+			<div id="box_a">
+				<a class="a" href="regist.html">注册</a>
+				<a class="a" href="wjmm.html">修改密码</a><br />
+			</div>
+			
+			<font id="btn">登录</font>
+		</div>
+		
+	</body>
+</html>

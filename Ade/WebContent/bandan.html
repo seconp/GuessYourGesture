@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>你画我猜榜单</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: url(img/hbslsd.jpg);
+				background-size: 100% 100%;
+			}
+			#cap{
+				font-size: 50px;
+				text-align: center;
+				color: red;
+			}
+			
+		</style>
+		<script src="js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+			
+		<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+			
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		
+		<script type="text/javascript">
+				$(document).ready(function(){
+						getScores();
+				/**
+				 * 获取榜单
+				 */
+				function getScores(){
+					//清理子元素
+					$("#tbody").empty();
+					console.log("该运行ajax了");
+					$.ajax({
+						type:"get",
+						url:"getphbservlet",
+						async:true,
+						dataType:"json",
+						success:function(data){
+							if(data.code != 0){
+								alert(data.msg);
+								return;
+							}
+							console.log("11111");
+							var list = data.obj;
+							for(var i = 0;i<list.length;i++){
+								var d = list[i];
+								var tr = document.createElement("tr");
+								tr.innerHTML = "<td>"+i+"</td><td>"+d.name+"</td><td>"+d.score+"</td>";
+								$("#tbody").append(tr);
+							}
+							console.log("22222");
+						},
+						error:function(code,msg){
+							console.log("00000");
+							alert("请检查您的网络");
+						}
+					});
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<table class="table table-hover" id="rank">
+			<caption id="cap">榜单</caption>
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>昵称</th>
+					<th>分数</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+				
+			</tbody>
+		</table>
+	</body>
+</html>
